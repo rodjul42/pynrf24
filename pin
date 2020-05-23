@@ -1,0 +1,7 @@
+nqno
+irq -> GPIO.25 , 37
+ce ->  GPIO.23 , 33
+
+pi
+irq -> gpio.6  , 31
+ce -> gpio.5,   30
