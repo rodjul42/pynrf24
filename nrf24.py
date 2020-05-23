@@ -20,24 +20,17 @@
 
 try:
     # For Raspberry Pi
+    import pigpio
+    pi = pigpio.pi()
+    SPIDEV_SPI = False
+except ImportError:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
-except ImportError:
-    try:
-        #For BBBB
-        import Adafruit_BBIO.GPIO as GPIO
-    except ImportError:
-        raise ImportError('Neither RPi.GPIO nor Adafruit_BBIO.GPIO module found.')
-
-# Try to Use spidev (which is faster) and then try Adafruit_BBIO
-try:
+    SPIDEV_SPI = True
+    
+if SPIDEV_SPI:
     import spidev
-    ADAFRUID_BBIO_SPI = False
-except:
-    from Adafruit_BBIO.SPI import SPI
-    ADAFRUID_BBIO_SPI = True
-
 
 # Use a monotonic clock if available to avoid unwanted side effects from clock
 # changes
@@ -221,7 +214,7 @@ class NRF24:
     def begin(self, major, minor, ce_pin, irq_pin):
         # Initialize SPI bus
 
-        if ADAFRUID_BBIO_SPI:
+        if not SPIDEV_SPI:
             self.spidev = SPI(major, minor)
             self.spidev.bpw = 8
             try:
